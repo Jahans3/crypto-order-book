@@ -1,4 +1,4 @@
-# OrderBook Web App
+# OrderBook Web Index
 
 This project visualises order flow of XBT/USD and ETH/USD in real time.
 
@@ -25,7 +25,7 @@ Branches should follow the below format:
 
 Commits should follow [Angular commit format](https://gist.github.com/brianclements/841ea7bffdb01346392c):
 
-`<type>(<scope>): <subject>` E.g. `feat(App): add new context provider` or `docs(readme): specify angular commit format`
+`<type>(<scope>): <subject>` E.g. `feat(Index): add new context provider` or `docs(readme): specify angular commit format`
 
 #### Deploying
 
