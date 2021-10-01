@@ -1,32 +1,17 @@
-import { Order, ProductIds } from "../typings";
+import { Order, OrderTotal, ProductIds } from "../typings";
 import { FEED, PRODUCT_ID } from "../constants";
 
 function initWorker() {
   const socket = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
 
-  let askState: Order[] = [];
-  let bidState: Order[] = [];
+  let askState: OrderTotal[] = [];
+  let bidState: OrderTotal[] = [];
+
+  let shouldUpdate = true;
 
   const intervalId = setInterval(() => {
-    postMessage({ asks: askState, bids: bidState });
+    shouldUpdate = true;
   }, 1000);
-
-  function updateDelta(delta: Order[], existing: Order[]) {
-    delta.forEach((newOrder) => {
-      const [newPrice, newSize] = newOrder;
-      const index = existing.findIndex(([price]) => price === newPrice);
-
-      if (index !== -1) {
-        if (newSize === 0) {
-          existing.splice(index, 1);
-        } else {
-          existing[index] = [newPrice, newSize];
-        }
-      } else {
-        existing.push([newPrice, newSize]);
-      }
-    });
-  }
 
   function handleSocketOpen() {
     socket.send(subscribe(PRODUCT_ID.XBT_USD));
@@ -48,12 +33,22 @@ function initWorker() {
   function handleSocketMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
 
+    function postUpdate(asks: Order[], bids: Order[]) {
+      if (!asks && !bids) return;
+
+      askState = updateDelta(asks, askState, "desc");
+      bidState = updateDelta(bids, bidState, "asc");
+      postMessage({ bids: bidState, asks: askState });
+    }
+
     switch (data.feed) {
       case FEED.DELTA: {
         const { asks, bids } = data as { asks: Order[]; bids: Order[] };
 
-        updateDelta(asks, askState);
-        updateDelta(bids, bidState);
+        if (shouldUpdate) {
+          postUpdate(asks, bids);
+          shouldUpdate = false;
+        }
 
         break;
       }
@@ -61,12 +56,7 @@ function initWorker() {
       case FEED.SNAPSHOT: {
         const { bids, asks } = data;
 
-        askState = asks;
-        bidState = bids;
-
-        postMessage({ bids: bidState, asks: askState });
-
-        break;
+        postUpdate(asks, bids);
       }
     }
   }
@@ -76,6 +66,54 @@ function initWorker() {
   socket.addEventListener("message", handleSocketMessage);
 }
 
-initWorker();
+function sortAscending([a]: OrderTotal, [b]: OrderTotal) {
+  return a - b;
+}
 
-export {}; // See: https://www.typescriptlang.org/tsconfig#non-module-files
+function sortDescending([a]: OrderTotal, [b]: OrderTotal) {
+  return b - a;
+}
+
+function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
+  const result: OrderTotal[] = [];
+
+  for (let i = 0; i < orders.length; i++) {
+    const [price, size] = orders[i];
+
+    if (i === 0) {
+      result.push([price, size, size]);
+      continue;
+    }
+
+    const [, , previousTotal] = result[i - 1];
+
+    result.push([price, size, size + previousTotal]);
+  }
+
+  return result;
+}
+
+function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc") {
+  const sortFunction = sort === "asc" ? sortAscending : sortDescending;
+
+  delta.forEach((newOrder) => {
+    const [newPrice, newSize] = newOrder;
+    const index = existing.findIndex(([price]) => price === newPrice);
+
+    if (index !== -1) {
+      if (newSize === 0) {
+        existing.splice(index, 1);
+      } else {
+        existing[index] = [newPrice, newSize, 0];
+      }
+    } else if (newSize !== 0) {
+      existing.push([newPrice, newSize, 0]);
+    }
+  });
+
+  existing.sort(sortFunction);
+
+  return getNewTotals(existing);
+}
+
+initWorker();
