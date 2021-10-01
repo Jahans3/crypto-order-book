@@ -1,7 +1,14 @@
 import { Delta, ETHUSDProductID, Snapshot, XBTUSDProductID } from "./typings";
 
+export const UPDATE_FREQUENCY_MS = 300;
+
+export const ATOM_PREFIX = "@orderFlow_";
+
 export const ATOM_KEY = {
-  ORDER_FLOW: "orderFlow",
+  SPREAD: `${ATOM_PREFIX}spread`,
+  ACTIVE_PRODUCT: `${ATOM_PREFIX}activeProduct`,
+  BID_FEED: `${ATOM_PREFIX}bidFeed`,
+  ASK_FEED: `${ATOM_PREFIX}askFeed`,
 };
 
 export const PRODUCT_ID = {

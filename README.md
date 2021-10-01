@@ -15,8 +15,7 @@ This project visualises order flow of XBT/USD and ETH/USD in real time.
 
 This app uses a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) as a proxy to connect to the websocket API. 
 This is done to offload some heavy array processing and fast incoming websocket messages away from the UI thread, the worker 
-also contains the throttling logic allowing the UI update logic to be as simple as possible. The worker will not update it's state
-on each websocket message, instead it is done so on a timer to reduce load on the client machine.
+also contains the throttling logic allowing the UI update logic to be as simple as possible.
 
 ### Contributing
 

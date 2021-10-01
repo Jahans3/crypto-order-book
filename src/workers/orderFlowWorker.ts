@@ -1,5 +1,5 @@
 import { Order, OrderTotal, ProductIds } from "../typings";
-import { FEED, PRODUCT_ID } from "../constants";
+import { FEED, PRODUCT_ID, UPDATE_FREQUENCY_MS } from "../constants";
 
 function initWorker() {
   const socket = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
@@ -11,7 +11,7 @@ function initWorker() {
 
   const intervalId = setInterval(() => {
     shouldUpdate = true;
-  }, 1000);
+  }, UPDATE_FREQUENCY_MS);
 
   function handleSocketOpen() {
     socket.send(subscribe(PRODUCT_ID.XBT_USD));
@@ -39,11 +39,25 @@ function initWorker() {
       askState = updateDelta(asks, askState, "desc");
       bidState = updateDelta(bids, bidState, "asc");
 
-      postMessage({ bids: bidState, asks: askState, ...rest });
+      const topAsk = askState[0][0];
+      const topBid = bidState[0][0];
+      const spreadNum = Math.abs(topAsk - topBid);
+      const spreadPercent = 100 * Math.abs((topAsk - topBid) / ((topAsk + topBid) / 2));
+
+      postMessage({ spread: { spreadNum, spreadPercent }, bids: bidState, asks: askState, ...rest });
     }
 
     switch (data.feed) {
       case FEED.DELTA: {
+        const { asks, bids } = data;
+
+        if (!asks && !bids) return;
+
+        // Ensure worker state is as up to date as possible
+        askState = updateDelta(asks, askState, "desc");
+        bidState = updateDelta(bids, bidState, "asc");
+
+        // Only post to main thread once per interval
         if (shouldUpdate) {
           postUpdate(data);
           shouldUpdate = false;
@@ -110,7 +124,7 @@ function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc
 
   existing.sort(sortFunction);
 
-  return getNewTotals(existing);
+  return getNewTotals(existing.slice(0, 100));
 }
 
 initWorker();

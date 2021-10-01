@@ -1,26 +1,24 @@
 import Worker from "worker-loader!../workers/orderFlowWorker";
-import { useEffect, useMemo, useState } from "react";
-import { PRODUCT_ID } from "../constants";
-import { ProductIds, Order } from "../typings";
+import { useEffect, useMemo } from "react";
+import { useSetRecoilState } from "recoil";
+import { spreadAtom, bidFeed, askFeed } from "../state/orderFlow";
+import { OrderData } from "../typings";
 
-export function useOrderFlow() {
+export function useOrderFlow(): void {
   const worker = useMemo(() => new Worker(), []);
-  const [activeProduct, setActiveProduct] = useState<ProductIds>(PRODUCT_ID.XBT_USD);
-  const [asks, setAsks] = useState<Order[]>([]);
-  const [bids, setBidss] = useState<Order[]>([]);
-
-  function toggleFeed() {
-    const nextProduct = activeProduct === PRODUCT_ID.XBT_USD ? PRODUCT_ID.ETH_USD : PRODUCT_ID.XBT_USD;
-    // TODO - tell worker to switch socket feed
-    setActiveProduct(nextProduct);
-  }
+  const setSpread = useSetRecoilState(spreadAtom);
+  const setBidFeed = useSetRecoilState(bidFeed);
+  const setAskFeed = useSetRecoilState(askFeed);
 
   useEffect(() => {
     worker.addEventListener("message", (event) => {
-      console.log(event.data);
+      const { spread, asks, bids } = event.data as OrderData;
+
+      setSpread(spread);
+      setAskFeed(asks);
+      setBidFeed(bids);
     });
+
     return worker.terminate;
   }, [worker]);
-
-  return { activeProduct, toggleFeed };
 }
