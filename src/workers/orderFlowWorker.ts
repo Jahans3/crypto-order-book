@@ -33,20 +33,19 @@ function initWorker() {
   function handleSocketMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
 
-    function postUpdate(asks: Order[], bids: Order[]) {
+    function postUpdate({ asks, bids, ...rest }: { asks: Order[]; bids: Order[] }) {
       if (!asks && !bids) return;
 
       askState = updateDelta(asks, askState, "desc");
       bidState = updateDelta(bids, bidState, "asc");
-      postMessage({ bids: bidState, asks: askState });
+
+      postMessage({ bids: bidState, asks: askState, ...rest });
     }
 
     switch (data.feed) {
       case FEED.DELTA: {
-        const { asks, bids } = data as { asks: Order[]; bids: Order[] };
-
         if (shouldUpdate) {
-          postUpdate(asks, bids);
+          postUpdate(data);
           shouldUpdate = false;
         }
 
@@ -54,9 +53,7 @@ function initWorker() {
       }
 
       case FEED.SNAPSHOT: {
-        const { bids, asks } = data;
-
-        postUpdate(asks, bids);
+        postUpdate(data);
       }
     }
   }
