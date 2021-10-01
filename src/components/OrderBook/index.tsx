@@ -62,17 +62,17 @@ function useOrderFlow() {
     });
 
     return socket.close;
-  }, []);
+  }, [socket]);
 
   return { activeFeed, toggleFeed };
 }
 
 export default function OrderBook(): React.ReactElement | null {
-  const { activeFeed, toggleFeed } = useOrderFlow();
+  // const { activeFeed, toggleFeed } = useOrderFlow();
   return (
     <div>
-      <h1>{activeFeed}</h1>
-      <button onClick={toggleFeed}>Toggle Feed</button>
+      {/*<h1>{activeFeed}</h1>*/}
+      {/*<button onClick={toggleFeed}>Toggle Feed</button>*/}
     </div>
   );
 }
