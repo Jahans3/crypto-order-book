@@ -7,6 +7,8 @@ import {
   WorkerWake,
   WorkerToggleProduct,
   XBTUSDProductID,
+  Bid,
+  Ask,
 } from "./typings";
 
 export const ATOM_PREFIX = "@orderFlow_";
@@ -16,6 +18,8 @@ export const ATOM_KEY = {
   ACTIVE_PRODUCT: `${ATOM_PREFIX}activeProduct`,
   BID_FEED: `${ATOM_PREFIX}bidFeed`,
   ASK_FEED: `${ATOM_PREFIX}askFeed`,
+  WORKER: `${ATOM_PREFIX}worker`,
+  WORKER_MESSAGES: `${ATOM_PREFIX}messages`,
 };
 
 export const PRODUCT_ID = {
@@ -28,9 +32,14 @@ export const FEED = {
   SNAPSHOT: "book_ui_1_snapshot" as Snapshot,
 };
 
-export const WORKER_MESSAGES = {
+export const WORKER_MESSAGE = {
   CLOSE: "close" as WorkerClose,
   TOGGLE_PRODUCT: "toggle" as WorkerToggleProduct,
   SLEEP: "sleep" as WorkerSleep,
   WAKE: "wake" as WorkerWake,
+};
+
+export const ORDER_TYPE = {
+  BID: "bid" as Bid,
+  ASK: "ask" as Ask,
 };

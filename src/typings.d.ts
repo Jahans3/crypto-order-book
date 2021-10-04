@@ -8,6 +8,9 @@ export type Price = number;
 export type Size = number;
 export type Total = number;
 
+export type Bid = "bid";
+export type Ask = "ask";
+export type OrderType = Bid | Ask;
 export type Order = [Price, Size];
 export type OrderTotal = [Price, Size, Total];
 export type Feeds = Delta | Snapshot;
@@ -33,7 +36,7 @@ type WorkerSleep = "sleep";
 type WorkerWake = "wake";
 type WorkerMessages = WorkerClose | WorkerToggleProduct | WorkerSleep | WorkerWake;
 
-export interface OrderFlowHook {
+export interface WorkerMessageFunctions {
   sleepWorker: () => void;
   wakeWorker: () => void;
   toggleProduct: () => void;

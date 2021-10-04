@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { spreadAtom } from "../../state/orderFlow";
+import { spreadAtom } from "../../state/orderFlowAtoms";
 import { Container, Title, Spread } from "./styled";
 
 export default function OrderBookHeader(): React.ReactElement {
@@ -9,7 +9,7 @@ export default function OrderBookHeader(): React.ReactElement {
     <Container>
       <Title>Order Book</Title>
       <Spread>
-        Spread: {spreadNum} ({spreadPercent.toFixed(2)})
+        Spread: {spreadNum} ({spreadPercent.toFixed(2)}%)
       </Spread>
     </Container>
   );

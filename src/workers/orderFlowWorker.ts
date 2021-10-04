@@ -1,5 +1,5 @@
 import { Order, OrderTotal, ProductIds } from "../typings";
-import { FEED, PRODUCT_ID, WORKER_MESSAGES } from "../constants";
+import { FEED, PRODUCT_ID, WORKER_MESSAGE } from "../constants";
 
 export const UPDATE_FREQUENCY_MS = 300; // TODO - vary based on device performance
 
@@ -20,15 +20,15 @@ function initWorker() {
     } = event;
 
     switch (message) {
-      case WORKER_MESSAGES.SLEEP:
+      case WORKER_MESSAGE.SLEEP:
         handleSocketClose();
         break;
 
-      case WORKER_MESSAGES.WAKE:
+      case WORKER_MESSAGE.WAKE:
         handleSocketOpen();
         break;
 
-      case WORKER_MESSAGES.TOGGLE_PRODUCT:
+      case WORKER_MESSAGE.TOGGLE_PRODUCT:
         handleSocketProductToggle();
     }
   }
@@ -75,14 +75,9 @@ function initWorker() {
 
     switch (data.feed) {
       case FEED.DELTA: {
-        const { asks, bids } = data;
-
-        if (!asks && !bids) return;
+        if (!data.asks && !data.bids) return;
 
         if (shouldUpdate) {
-          askState = updateDelta(asks, askState, "desc");
-          bidState = updateDelta(bids, bidState, "asc");
-
           postUpdate(data);
 
           shouldUpdate = false;

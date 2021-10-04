@@ -5,8 +5,8 @@ export const THEME = {
   text: {
     light: "#FFFFFF",
     dark: "#8D8D8D",
-    green: "#01B53C",
-    red: "#A40000",
+    green: "#00d449",
+    red: "#f50000",
   },
   font: "verdana, sans-serif",
 };
