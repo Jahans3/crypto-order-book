@@ -1,6 +1,13 @@
-import { Delta, ETHUSDProductID, Snapshot, XBTUSDProductID } from "./typings";
-
-export const UPDATE_FREQUENCY_MS = 300;
+import {
+  Delta,
+  ETHUSDProductID,
+  Snapshot,
+  WorkerClose,
+  WorkerSleep,
+  WorkerWake,
+  WorkerToggleProduct,
+  XBTUSDProductID,
+} from "./typings";
 
 export const ATOM_PREFIX = "@orderFlow_";
 
@@ -19,4 +26,11 @@ export const PRODUCT_ID = {
 export const FEED = {
   DELTA: "book_ui_1" as Delta,
   SNAPSHOT: "book_ui_1_snapshot" as Snapshot,
+};
+
+export const WORKER_MESSAGES = {
+  CLOSE: "close" as WorkerClose,
+  TOGGLE_PRODUCT: "toggle" as WorkerToggleProduct,
+  SLEEP: "sleep" as WorkerSleep,
+  WAKE: "wake" as WorkerWake,
 };

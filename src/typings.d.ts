@@ -26,3 +26,15 @@ export interface OrderData {
   numLevels: number;
   spread: Spread;
 }
+
+type WorkerClose = "close";
+type WorkerToggleProduct = "toggle";
+type WorkerSleep = "sleep";
+type WorkerWake = "wake";
+type WorkerMessages = WorkerClose | WorkerToggleProduct | WorkerSleep | WorkerWake;
+
+export interface OrderFlowHook {
+  sleepWorker: () => void;
+  wakeWorker: () => void;
+  toggleProduct: () => void;
+}

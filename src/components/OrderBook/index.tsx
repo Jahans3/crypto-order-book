@@ -9,13 +9,14 @@ const Cell = ({ value, highlight = "#000" }: { value: number | string; highlight
 );
 
 export default function OrderBook(): React.ReactElement | null {
-  useOrderFlow();
+  const { sleepWorker } = useOrderFlow();
+
   const asks = useRecoilValue(askFeed);
   const bids = useRecoilValue(bidFeed);
-  // console.log({ a: asks.length, b: bids.length });
+
   return (
     <div>
-      <h1>Bookywooky</h1>
+      <h1 onClick={sleepWorker}>Bookywooky</h1>
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyItems: "flex-start" }}>
           <div style={{ display: "flex", width: 300, justifyContent: "flex-start" }}>

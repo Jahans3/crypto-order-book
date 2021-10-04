@@ -1,5 +1,7 @@
 import { Order, OrderTotal, ProductIds } from "../typings";
-import { FEED, PRODUCT_ID, UPDATE_FREQUENCY_MS } from "../constants";
+import { FEED, PRODUCT_ID, WORKER_MESSAGES } from "../constants";
+
+export const UPDATE_FREQUENCY_MS = 300; // TODO - vary based on device performance
 
 function initWorker() {
   const socket = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
@@ -7,14 +9,35 @@ function initWorker() {
   let askState: OrderTotal[] = [];
   let bidState: OrderTotal[] = [];
 
+  let activeProduct: ProductIds = PRODUCT_ID.XBT_USD;
   let shouldUpdate = true;
 
-  const intervalId = setInterval(() => {
-    shouldUpdate = true;
-  }, UPDATE_FREQUENCY_MS);
+  let intervalId: NodeJS.Timer;
+
+  function handleWorkerMessage(event: MessageEvent) {
+    const {
+      data: { message },
+    } = event;
+
+    switch (message) {
+      case WORKER_MESSAGES.SLEEP:
+        handleSocketClose();
+        break;
+
+      case WORKER_MESSAGES.WAKE:
+        handleSocketOpen();
+        break;
+
+      case WORKER_MESSAGES.TOGGLE_PRODUCT:
+        handleSocketProductToggle();
+    }
+  }
 
   function handleSocketOpen() {
-    socket.send(subscribe(PRODUCT_ID.XBT_USD));
+    socket.send(subscribe(activeProduct));
+    intervalId = setInterval(() => {
+      shouldUpdate = true;
+    }, UPDATE_FREQUENCY_MS);
   }
 
   function handleSocketClose() {
@@ -22,12 +45,15 @@ function initWorker() {
     clearInterval(intervalId);
   }
 
-  function subscribe(to: ProductIds) {
-    return JSON.stringify({ event: "subscribe", feed: "book_ui_1", product_ids: [to] });
-  }
+  function handleSocketProductToggle() {
+    askState = [];
+    bidState = [];
 
-  function unsubscribe(to: ProductIds) {
-    return JSON.stringify({ event: "unsubscribe", feed: "book_ui_1", product_ids: [to] });
+    socket.send(unsubscribe(activeProduct));
+
+    activeProduct = activeProduct === PRODUCT_ID.XBT_USD ? PRODUCT_ID.ETH_USD : PRODUCT_ID.XBT_USD;
+
+    socket.send(subscribe(activeProduct));
   }
 
   function handleSocketMessage(event: MessageEvent) {
@@ -53,13 +79,12 @@ function initWorker() {
 
         if (!asks && !bids) return;
 
-        // Ensure worker state is as up to date as possible
-        askState = updateDelta(asks, askState, "desc");
-        bidState = updateDelta(bids, bidState, "asc");
-
-        // Only post to main thread once per interval
         if (shouldUpdate) {
+          askState = updateDelta(asks, askState, "desc");
+          bidState = updateDelta(bids, bidState, "asc");
+
           postUpdate(data);
+
           shouldUpdate = false;
         }
 
@@ -75,6 +100,16 @@ function initWorker() {
   socket.addEventListener("open", handleSocketOpen);
   socket.addEventListener("close", handleSocketClose);
   socket.addEventListener("message", handleSocketMessage);
+
+  onmessage = handleWorkerMessage;
+}
+
+function subscribe(to: ProductIds) {
+  return JSON.stringify({ event: "subscribe", feed: "book_ui_1", product_ids: [to] });
+}
+
+function unsubscribe(to: ProductIds) {
+  return JSON.stringify({ event: "unsubscribe", feed: "book_ui_1", product_ids: [to] });
 }
 
 function sortAscending([a]: OrderTotal, [b]: OrderTotal) {
