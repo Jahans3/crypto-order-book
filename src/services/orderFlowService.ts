@@ -56,5 +56,5 @@ export function useOrderFlow(): void {
       worker.terminate();
       worker.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [setAskFeed, setBidFeed, setSpread, setWorker, setWorkerMessages, sleepWorker, toggleProduct, wakeWorker, worker]);
 }
