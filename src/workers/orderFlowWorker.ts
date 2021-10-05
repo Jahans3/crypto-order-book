@@ -108,11 +108,11 @@ function unsubscribe(to: ProductIds) {
 }
 
 function sortAscending([a]: OrderTotal, [b]: OrderTotal) {
-  return a - b;
+  return b - a;
 }
 
 function sortDescending([a]: OrderTotal, [b]: OrderTotal) {
-  return b - a;
+  return a - b;
 }
 
 function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
@@ -137,20 +137,20 @@ function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
 function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc") {
   const sortFunction = sort === "asc" ? sortAscending : sortDescending;
 
-  delta.forEach((newOrder) => {
-    const [newPrice, newSize] = newOrder;
-    const index = existing.findIndex(([price]) => price === newPrice);
+  for (let i = 0; i < delta.length; i++) {
+    const [newPrice, newSize] = delta[i];
+    const matchedIndex = existing.findIndex(([price]) => price === newPrice);
 
-    if (index !== -1) {
+    if (matchedIndex !== -1) {
       if (newSize === 0) {
-        existing.splice(index, 1);
+        existing.splice(matchedIndex, 1);
       } else {
-        existing[index] = [newPrice, newSize, 0];
+        existing[matchedIndex] = [newPrice, newSize, 0];
       }
     } else if (newSize !== 0) {
       existing.push([newPrice, newSize, 0]);
     }
-  });
+  }
 
   existing.sort(sortFunction);
 

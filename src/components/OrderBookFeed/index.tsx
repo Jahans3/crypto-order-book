@@ -70,6 +70,8 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
 
+  useEffect(() => drawChart(feed.slice(0, numRows), svgRef.current, type), [feed, numRows, type]);
+
   useEffect(() => {
     function handleResize() {
       const bounds = tableRef.current?.getBoundingClientRect();
@@ -91,13 +93,13 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
     };
   }, [tableRef]);
 
-  useEffect(() => {
-    drawChart(feed.slice(0, numRows), svgRef.current);
-  }, [feed]);
-
   return (
     <Container>
-      <svg ref={svgRef} className={`chart-${type}`} style={{ position: "absolute", height: "100%", width: "100%" }} />
+      <svg
+        ref={svgRef}
+        className={`chart-${type}`}
+        style={{ position: "absolute", height: "calc(100% - 27px)", width: "100%", bottom: 0 }}
+      />
       <Table ref={tableRef} style={{ position: "absolute", height: "100%", width: "100%" }}>
         <thead>
           <tr>
