@@ -1,9 +1,16 @@
 import styled from "styled-components";
 import { OrderType } from "../../typings";
 
-export const Table = styled.table`
+export const Container = styled.div`
+  position: relative;
   width: 50%;
   background-color: ${(props) => props.theme.main};
+`;
+
+export const Table = styled.table`
+  //width: 50%;
+  // background-color: ${(props) => props.theme.main};
+  background: transparent;
 `;
 
 export const THead = styled.th<{ end?: "left" | "right" }>`

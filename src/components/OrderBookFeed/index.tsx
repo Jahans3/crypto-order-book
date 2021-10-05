@@ -3,7 +3,8 @@ import { useRecoilValue } from "recoil";
 import { askFeedAtom, bidFeedAtom } from "../../state/orderFlowAtoms";
 import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
-import { Td, THead, Table } from "./styled";
+import { Td, THead, Table, Container } from "./styled";
+import { drawChart } from "../OrderBookChart";
 
 const orderTypeStateMap = {
   [ORDER_TYPE.BID]: bidFeedAtom,
@@ -65,6 +66,7 @@ function Row({ type, total, size, price }: RowProps) {
 
 export default function OrderBookFeed({ type }: Props): React.ReactElement | null {
   const tableRef = useRef<HTMLTableElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
 
@@ -89,18 +91,25 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
     };
   }, [tableRef]);
 
+  useEffect(() => {
+    drawChart(feed.slice(0, numRows), svgRef.current);
+  }, [feed]);
+
   return (
-    <Table ref={tableRef}>
-      <thead>
-        <tr>
-          <Headers type={type} />
-        </tr>
-      </thead>
-      <tbody>
-        {feed.slice(0, numRows).map(([price, size, total]) => (
-          <Row key={total} type={type} price={price} size={size} total={total} />
-        ))}
-      </tbody>
-    </Table>
+    <Container>
+      <svg ref={svgRef} className={`chart-${type}`} style={{ position: "absolute", height: "100%", width: "100%" }} />
+      <Table ref={tableRef} style={{ position: "absolute", height: "100%", width: "100%" }}>
+        <thead>
+          <tr>
+            <Headers type={type} />
+          </tr>
+        </thead>
+        <tbody>
+          {feed.slice(0, numRows).map(([price, size, total]) => (
+            <Row key={total} type={type} price={price} size={size} total={total} />
+          ))}
+        </tbody>
+      </Table>
+    </Container>
   );
 }
