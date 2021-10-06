@@ -20,6 +20,11 @@ export const Table = styled.table`
   width: 100%;
   z-index: 2;
   background: transparent;
+  border-spacing: 0;
+`;
+
+export const Tr = styled.tr`
+  background-color: ${(props) => props.theme.main};
 `;
 
 export const THead = styled.th<{ end?: "left" | "right" }>`

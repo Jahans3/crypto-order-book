@@ -5,9 +5,10 @@ import Headers from "./Headers";
 import Row from "./Row";
 import { askFeedAtom, bidFeedAtom } from "../../state/orderFlowAtoms";
 import { OrderType } from "../../typings";
-import { MOBILE_BREAKPOINT, ORDER_TYPE } from "../../constants";
-import { Table, Container } from "./styled";
+import { ORDER_TYPE } from "../../constants";
+import { Table, Container, Tr } from "./styled";
 import OrderBookSpread from "../OrderBookSpread";
+import { getIsMobile } from "../../utils";
 
 const orderTypeStateMap = {
   [ORDER_TYPE.BID]: bidFeedAtom,
@@ -22,7 +23,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
   const tableRef = useRef<HTMLTableElement>(null);
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
-  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+  const isMobile = getIsMobile();
 
   useEffect(() => {
     function handleResize() {
@@ -49,7 +50,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
     <Container>
       <Table ref={tableRef}>
         <thead>
-          <tr>
+          <Tr>
             {type === ORDER_TYPE.BID && isMobile ? (
               <th colSpan={3}>
                 <OrderBookSpread />
@@ -57,7 +58,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
             ) : (
               <Headers type={type} />
             )}
-          </tr>
+          </Tr>
         </thead>
         <tbody>
           {feed.slice(0, numRows).map(([price, size, total]) => (

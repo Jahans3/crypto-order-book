@@ -1,10 +1,10 @@
 import React from "react";
 import OrderBookSpread from "../OrderBookSpread";
 import { Container, Title } from "./styled";
-import { MOBILE_BREAKPOINT } from "../../constants";
+import { getIsMobile } from "../../utils";
 
 export default function OrderBookHeader(): React.ReactElement {
-  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+  const isMobile = getIsMobile();
   return (
     <Container>
       <Title>Order Book</Title>

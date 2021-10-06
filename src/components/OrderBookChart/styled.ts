@@ -1,9 +1,26 @@
 import styled from "styled-components";
 import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
+import { getIsMobile } from "../../utils";
 
 export const Container = styled.div<{ type: OrderType }>`
   ${(props) => {
+    const isMobile = getIsMobile();
+
+    if (props.type === ORDER_TYPE.ASK && isMobile) {
+      return `
+        transform: scaleX(-1) scaleY(-1) translateX(0px);
+        height: 100%;
+      `;
+    }
+
+    if (props.type === ORDER_TYPE.BID && isMobile) {
+      return `
+        transform: scaleX(-1) translateX(0px);
+        height: 100%;
+      `;
+    }
+
     if (props.type === ORDER_TYPE.ASK) {
       return `
         transform: scaleX(-1) translateX(0px);
