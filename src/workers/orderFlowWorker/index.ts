@@ -1,7 +1,7 @@
 import { Order, OrderTotal, ProductIds, Spread } from "../../typings";
 import { FEED, PRODUCT_ID, WORKER_MESSAGE } from "../../constants";
 
-export const UPDATE_FREQUENCY_MS = 300; // TODO - vary based on device performance
+export const UPDATE_FREQUENCY_MS = 300;
 
 function getSocket() {
   return new WebSocket("wss://www.cryptofacilities.com/ws/v1");
