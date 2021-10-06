@@ -8,7 +8,7 @@ import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
 import { Table, Container, Tr } from "./styled";
 import OrderBookSpread from "../OrderBookSpread";
-import { getIsMobile } from "../../utils";
+import { useIsMobile } from "../../utils";
 
 const orderTypeStateMap = {
   [ORDER_TYPE.BID]: bidFeedAtom,
@@ -23,7 +23,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
   const tableRef = useRef<HTMLTableElement>(null);
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
-  const isMobile = getIsMobile();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     function handleResize() {

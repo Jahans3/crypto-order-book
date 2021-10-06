@@ -104,6 +104,7 @@
     "@typescript-eslint/parser": "^4.32.0",
     "eslint": "^7.32.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "jest-styled-components": "^7.0.5",
     "prettier": "2.4.1",
     "ts-loader": "8.x",
     "typescript": "^4.4.3",
@@ -134,12 +135,13 @@
     },
     "transformIgnorePatterns": [
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
-      "^.+\\.module\\.(css|sass|scss)$"
+      "/node_modules/d3"
     ],
     "modulePaths": [],
     "moduleNameMapper": {
       "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
+      "worker-loader!../../workers/orderFlowWorker": "<rootDir>/src/workers/orderFlowWorker/index.ts"
     },
     "moduleFileExtensions": [
       "web.js",

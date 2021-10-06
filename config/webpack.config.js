@@ -345,7 +345,7 @@ module.exports = function (webpackEnv) {
           loader: "worker-loader",
         },
         {
-          test: /orderFlowWorker.ts$/,
+          test: /orderFlowWorker\/index.ts$/,
           loader: "ts-loader",
         },
         // Disable require.ensure as it's not a standard language feature.

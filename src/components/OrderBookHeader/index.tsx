@@ -1,10 +1,10 @@
 import React from "react";
 import OrderBookSpread from "../OrderBookSpread";
 import { Container, Title } from "./styled";
-import { getIsMobile } from "../../utils";
+import { useIsMobile } from "../../utils";
 
 export default function OrderBookHeader(): React.ReactElement {
-  const isMobile = getIsMobile();
+  const isMobile = useIsMobile();
   return (
     <Container>
       <Title>Order Book</Title>

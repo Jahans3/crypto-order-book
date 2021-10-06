@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
-import { getIsMobile } from "../../utils";
+import { useIsMobile } from "../../utils";
 
 export const Container = styled.div<{ type: OrderType }>`
   ${(props) => {
-    const isMobile = getIsMobile();
+    const isMobile = useIsMobile();
 
     if (props.type === ORDER_TYPE.ASK && isMobile) {
       return `

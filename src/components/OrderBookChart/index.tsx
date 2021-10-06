@@ -2,6 +2,7 @@ import React, { useEffect, useRef, memo } from "react";
 import drawChart from "./chart";
 import { Container, SVGRoot } from "./styled";
 import { OrderTotal, OrderType } from "../../typings";
+import * as testIds from "./testIds";
 
 interface Props {
   type: OrderType;
@@ -15,7 +16,7 @@ function OrderBookChart({ type, numRows, feed }: Props): React.ReactElement {
   useEffect(() => drawChart(feed.slice(0, numRows), svgRef.current, type), [feed, numRows, type]);
 
   return (
-    <Container type={type}>
+    <Container type={type} data-testid={testIds.container}>
       <SVGRoot ref={svgRef} className={`chart-${type}`} />
     </Container>
   );

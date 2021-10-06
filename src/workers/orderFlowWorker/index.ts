@@ -1,5 +1,5 @@
-import { Order, OrderTotal, ProductIds } from "../typings";
-import { FEED, PRODUCT_ID, WORKER_MESSAGE } from "../constants";
+import { Order, OrderTotal, ProductIds, Spread } from "../../typings";
+import { FEED, PRODUCT_ID, WORKER_MESSAGE } from "../../constants";
 
 export const UPDATE_FREQUENCY_MS = 300; // TODO - vary based on device performance
 
@@ -80,13 +80,10 @@ function initSocket(initialActiveProduct: ProductIds = PRODUCT_ID.XBT_USD) {
     function postUpdate({ asks, bids, ...rest }: { asks: Order[]; bids: Order[] }) {
       if (!asks && !bids) return;
 
-      askState = updateDelta(asks, askState, "desc");
-      bidState = updateDelta(bids, bidState, "asc");
+      askState = updateDelta(asks, askState, "asc");
+      bidState = updateDelta(bids, bidState, "desc");
 
-      const topAsk = askState[0][0];
-      const topBid = bidState[0][0];
-      const spreadNum = Math.abs(topAsk - topBid);
-      const spreadPercent = 100 * Math.abs((topAsk - topBid) / ((topAsk + topBid) / 2));
+      const { spreadNum, spreadPercent } = getSpread(askState, bidState);
 
       postMessage({ spread: { spreadNum, spreadPercent }, bids: bidState, asks: askState, ...rest });
     }
@@ -116,7 +113,7 @@ function initSocket(initialActiveProduct: ProductIds = PRODUCT_ID.XBT_USD) {
   socket.addEventListener("message", handleSocketMessage);
 
   // Worker handlers
-  onmessage = handleWorkerMessage;
+  global.onmessage = handleWorkerMessage;
 }
 
 function subscribe(to: ProductIds) {
@@ -128,14 +125,14 @@ function unsubscribe(to: ProductIds) {
 }
 
 function sortAscending([a]: OrderTotal, [b]: OrderTotal) {
-  return b - a;
-}
-
-function sortDescending([a]: OrderTotal, [b]: OrderTotal) {
   return a - b;
 }
 
-function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
+function sortDescending([a]: OrderTotal, [b]: OrderTotal) {
+  return b - a;
+}
+
+export function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
   const result: OrderTotal[] = [];
 
   for (let i = 0; i < orders.length; i++) {
@@ -154,7 +151,7 @@ function getNewTotals(orders: OrderTotal[]): OrderTotal[] {
   return result;
 }
 
-function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc") {
+export function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc"): OrderTotal[] {
   const sortFunction = sort === "asc" ? sortAscending : sortDescending;
 
   for (let i = 0; i < delta.length; i++) {
@@ -175,6 +172,15 @@ function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc
   existing.sort(sortFunction);
 
   return getNewTotals(existing.slice(0, 100));
+}
+
+export function getSpread(askState: OrderTotal[], bidState: OrderTotal[]): Spread {
+  const topAsk = askState[0][0];
+  const topBid = bidState[0][0];
+  const spreadNum = Math.abs(topAsk - topBid);
+  const spreadPercent = 100 * Math.abs((topAsk - topBid) / ((topAsk + topBid) / 2));
+
+  return { spreadNum, spreadPercent };
 }
 
 initSocket();

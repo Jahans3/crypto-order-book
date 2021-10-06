@@ -1,17 +1,17 @@
-import Worker from "worker-loader!../workers/orderFlowWorker";
+import Worker from "worker-loader!../../workers/orderFlowWorker";
 import { useEffect, useMemo } from "react";
 import { useSetRecoilState } from "recoil";
-import { spreadAtom, bidFeedAtom, askFeedAtom, workerAtom, workerMessagesAtom } from "../state/orderFlowAtoms";
-import { NOTIFICATION_STATUS, WORKER_MESSAGE } from "../constants";
-import { OrderData, WorkerMessages } from "../typings";
+import { spreadAtom, bidFeedAtom, askFeedAtom, workerAtom, workerMessagesAtom } from "../../state/orderFlowAtoms";
+import { NOTIFICATION_STATUS, WORKER_MESSAGE } from "../../constants";
+import { OrderData, WorkerMessageFunctions, WorkerMessages } from "../../typings";
 import {
   notificationMessageAtom,
   notificationStatusAtom,
   notificationUptimeAtom,
   onNotificationCloseAtom,
-} from "../state/notification";
+} from "../../state/notification";
 
-// TS DOM lib does not support browser-specific properties so copy document and add to it's type def
+// TS DOM lib does not support browser-specific properties so we extend Document
 type TDocument = Document & { webkitHidden?: boolean };
 
 interface VisibilityChangeEvents {
@@ -19,7 +19,11 @@ interface VisibilityChangeEvents {
   visibilityChange: "webkitvisibilitychange" | "visibilitychange";
 }
 
-function initWorker() {
+interface InitialisedWorker extends WorkerMessageFunctions {
+  worker: Worker;
+}
+
+export function initWorker(): InitialisedWorker {
   const worker = new Worker();
 
   function postMessage(message: WorkerMessages) {

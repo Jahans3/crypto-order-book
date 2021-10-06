@@ -9,6 +9,7 @@ import {
 } from "../../state/notification";
 import { NOTIFICATION_STATUS } from "../../constants";
 import { Container, NotificationText } from "./styled";
+import * as testIds from "./testIds";
 
 export default function Notification(): React.ReactElement | null {
   const [notificationStatus, setNotificationStatus] = useRecoilState(notificationStatusAtom);
@@ -60,9 +61,11 @@ export default function Notification(): React.ReactElement | null {
   }
 
   return (
-    <Container>
-      <NotificationText>{notificationMessage}</NotificationText>
-      <Button onClick={closeNotification}>OK</Button>
+    <Container data-testid={testIds.container}>
+      <NotificationText data-testid={testIds.notificationText}>{notificationMessage}</NotificationText>
+      <Button onClick={closeNotification} data-testid={testIds.button}>
+        OK
+      </Button>
     </Container>
   );
 }

@@ -11,7 +11,7 @@ This project visualises order flow of XBT/USD and ETH/USD in real time.
 
 ### App Overview
 
-`order flow socket` `---->` [`order flow worker`](./src/workers/orderFlowWorker.ts) `---->` [`order flow service`](./src/services/orderFlowService.ts)
+`order flow socket` `---->` [`order flow worker`](src/workers/orderFlowWorker/index.ts) `---->` [`order flow service`](src/services/orderFlowService/index.ts)
 
 This app uses a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) as a proxy to connect to the websocket API. 
 This is done to offload some heavy array processing and fast incoming websocket messages away from the UI thread, the worker 
