@@ -1,76 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
+import OrderBookChart from "../OrderBookChart";
+import Headers from "./Headers";
+import Row from "./Row";
 import { askFeedAtom, bidFeedAtom } from "../../state/orderFlowAtoms";
 import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
-import { Td, THead, Table, Container } from "./styled";
-import { drawChart } from "../OrderBookChart";
+import { Table, Container } from "./styled";
 
 const orderTypeStateMap = {
   [ORDER_TYPE.BID]: bidFeedAtom,
   [ORDER_TYPE.ASK]: askFeedAtom,
 };
 
-function formatThousands(number: number, options?: { minimumFractionDigits: number }): string {
-  return new Intl.NumberFormat("en-EN", options).format(number);
-}
-
 interface Props {
   type: OrderType;
 }
 
-function Headers({ type }: Props) {
-  return type === ORDER_TYPE.BID ? (
-    <>
-      <THead colSpan={1} end="left">
-        TOTAL
-      </THead>
-      <THead colSpan={1}>SIZE</THead>
-      <THead colSpan={1}>PRICE</THead>
-    </>
-  ) : (
-    <>
-      <THead colSpan={1}>PRICE</THead>
-      <THead colSpan={1}>SIZE</THead>
-      <THead colSpan={1} end="right">
-        TOTAL
-      </THead>
-    </>
-  );
-}
-
-interface RowProps extends Props {
-  total: number;
-  size: number;
-  price: number;
-}
-
-function Row({ type, total, size, price }: RowProps) {
-  const formattedTotal = formatThousands(total);
-  const formattedSize = formatThousands(size);
-  const formattedPrice = formatThousands(price, { minimumFractionDigits: 2 });
-  return type === ORDER_TYPE.BID ? (
-    <tr>
-      <Td end="left">{formattedTotal}</Td>
-      <Td>{formattedSize}</Td>
-      <Td type="bid">{formattedPrice}</Td>
-    </tr>
-  ) : (
-    <tr>
-      <Td type="ask">{formattedPrice}</Td>
-      <Td>{formattedSize}</Td>
-      <Td end="right">{formattedTotal}</Td>
-    </tr>
-  );
-}
-
 export default function OrderBookFeed({ type }: Props): React.ReactElement | null {
   const tableRef = useRef<HTMLTableElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
-
-  useEffect(() => drawChart(feed.slice(0, numRows), svgRef.current, type), [feed, numRows, type]);
 
   useEffect(() => {
     function handleResize() {
@@ -95,7 +45,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
 
   return (
     <Container>
-      <Table ref={tableRef} style={{ position: "absolute", height: "100%", width: "100%", zIndex: 2 }}>
+      <Table ref={tableRef}>
         <thead>
           <tr>
             <Headers type={type} />
@@ -107,13 +57,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
           ))}
         </tbody>
       </Table>
-      <div style={type === "ask" ? { transform: "scaleX(-1) translateX(0px)", height: "100%" } : {}}>
-        <svg
-          ref={svgRef}
-          className={`chart-${type}`}
-          style={{ position: "absolute", height: "calc(100% - 27px)", width: "100%", bottom: 0 }}
-        />
-      </div>
+      <OrderBookChart type={type} numRows={numRows} feed={feed} />
     </Container>
   );
 }

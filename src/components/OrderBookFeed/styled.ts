@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { OrderType } from "../../typings";
+import { ORDER_TYPE } from "../../constants";
 
 export const Container = styled.div`
   position: relative;
@@ -8,6 +9,10 @@ export const Container = styled.div`
 `;
 
 export const Table = styled.table`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
   background: transparent;
 `;
 
@@ -41,7 +46,7 @@ export const Td = styled.td<{ type?: OrderType; end?: "left" | "right" }>`
     } = props;
     if (!type) return props.theme.text.light;
 
-    return type === "bid" ? text.green : text.red;
+    return type === ORDER_TYPE.BID ? text.green : text.red;
   }};
   ${(props) => {
     const { end } = props;

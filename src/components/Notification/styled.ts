@@ -20,4 +20,5 @@ export const NotificationText = styled.span`
   color: ${(props) => props.theme.text.light};
   font-family: ${(props) => props.theme.font};
   font-size: 17px;
+  text-align: center;
 `;

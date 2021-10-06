@@ -15,3 +15,8 @@ export const notificationMessageAtom = atom<string>({
   key: ATOM_KEY.NOTIFICATION_MESSAGE,
   default: "",
 });
+
+export const onNotificationCloseAtom = atom<undefined | (() => void)>({
+  key: ATOM_KEY.ON_NOTIFICATION_CLOSE,
+  default: undefined,
+});

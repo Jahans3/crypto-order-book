@@ -1,33 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import Button from "../Button";
-import { notificationStatusAtom, notificationUptimeAtom, notificationMessageAtom } from "../../state/notification";
+import {
+  notificationStatusAtom,
+  notificationUptimeAtom,
+  notificationMessageAtom,
+  onNotificationCloseAtom,
+} from "../../state/notification";
 import { NOTIFICATION_STATUS } from "../../constants";
 import { Container, NotificationText } from "./styled";
 
 export default function Notification(): React.ReactElement | null {
   const [notificationStatus, setNotificationStatus] = useRecoilState(notificationStatusAtom);
   const [notificationMessage, setNotificationMessage] = useRecoilState(notificationMessageAtom);
-  const notificationUptime = useRecoilValue(notificationUptimeAtom);
+  const [onNotificationClose, setOnNotificationClose] = useRecoilState(onNotificationCloseAtom);
+  const [notificationUptime, setNotificationUptime] = useRecoilState(notificationUptimeAtom);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  function resetNotificationState() {
+    onNotificationClose?.();
+
+    if (notificationStatus !== NOTIFICATION_STATUS.HIDDEN) {
+      setNotificationStatus(NOTIFICATION_STATUS.HIDDEN);
+    }
+
+    if (notificationMessage !== "") {
+      setNotificationMessage("");
+    }
+
+    if (notificationUptime !== 2500) {
+      setNotificationUptime(2500);
+    }
+
+    if (onNotificationClose !== undefined) {
+      setOnNotificationClose(undefined);
+    }
+  }
 
   useEffect(() => {
     if (notificationStatus === NOTIFICATION_STATUS.VISIBLE) {
-      const id = setTimeout(() => {
-        setNotificationStatus(NOTIFICATION_STATUS.HIDDEN);
-        setNotificationMessage("");
-      }, notificationUptime);
-
+      const id = setTimeout(resetNotificationState, notificationUptime);
       setTimeoutId(id);
     }
-  }, [notificationStatus, notificationUptime, setNotificationStatus, setNotificationMessage]);
+
+    // Ignore the warning to include resetNotificationState as this would cause unwanted useEffect calls
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notificationStatus]);
 
   if (notificationStatus === NOTIFICATION_STATUS.HIDDEN) {
     return null;
   }
 
   function closeNotification() {
-    setNotificationStatus(NOTIFICATION_STATUS.HIDDEN);
+    resetNotificationState();
 
     if (timeoutId) {
       clearTimeout(timeoutId);

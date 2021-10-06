@@ -26,6 +26,7 @@ export const ATOM_KEY = {
   NOTIFICATION_STATUS: `${ATOM_PREFIX}notificationStatus`,
   NOTIFICATION_UPTIME: `${ATOM_PREFIX}notificationUptime`,
   NOTIFICATION_MESSAGE: `${ATOM_PREFIX}notificationMessage`,
+  ON_NOTIFICATION_CLOSE: `${ATOM_PREFIX}onNotificationClose`,
 };
 
 export const PRODUCT_ID = {

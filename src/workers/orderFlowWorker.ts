@@ -3,13 +3,17 @@ import { FEED, PRODUCT_ID, WORKER_MESSAGE } from "../constants";
 
 export const UPDATE_FREQUENCY_MS = 300; // TODO - vary based on device performance
 
-function initWorker() {
-  const socket = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
+function getSocket() {
+  return new WebSocket("wss://www.cryptofacilities.com/ws/v1");
+}
+
+function initSocket(initialActiveProduct: ProductIds = PRODUCT_ID.XBT_USD) {
+  let socket: WebSocket | null = getSocket();
 
   let askState: OrderTotal[] = [];
   let bidState: OrderTotal[] = [];
 
-  let activeProduct: ProductIds = PRODUCT_ID.XBT_USD;
+  let activeProduct: ProductIds = initialActiveProduct;
   let shouldUpdate = true;
 
   let intervalId: NodeJS.Timer;
@@ -21,11 +25,11 @@ function initWorker() {
 
     switch (message) {
       case WORKER_MESSAGE.SLEEP:
-        handleSocketClose();
+        handleSocketSleep();
         break;
 
       case WORKER_MESSAGE.WAKE:
-        handleSocketOpen();
+        handleSocketWake();
         break;
 
       case WORKER_MESSAGE.TOGGLE_PRODUCT:
@@ -34,26 +38,38 @@ function initWorker() {
   }
 
   function handleSocketOpen() {
-    socket.send(subscribe(activeProduct));
+    socket?.send(subscribe(activeProduct));
     intervalId = setInterval(() => {
       shouldUpdate = true;
     }, UPDATE_FREQUENCY_MS);
   }
 
   function handleSocketClose() {
-    socket.close();
+    socket?.removeEventListener("message", handleSocketMessage);
+    socket?.removeEventListener("open", handleSocketOpen);
+    socket?.removeEventListener("close", handleSocketClose);
     clearInterval(intervalId);
+    socket = null;
+  }
+
+  function handleSocketSleep() {
+    socket?.send(unsubscribe(activeProduct));
+    socket?.close();
+  }
+
+  function handleSocketWake() {
+    initSocket(activeProduct);
   }
 
   function handleSocketProductToggle() {
     askState = [];
     bidState = [];
 
-    socket.send(unsubscribe(activeProduct));
+    socket?.send(unsubscribe(activeProduct));
 
     activeProduct = activeProduct === PRODUCT_ID.XBT_USD ? PRODUCT_ID.ETH_USD : PRODUCT_ID.XBT_USD;
 
-    socket.send(subscribe(activeProduct));
+    socket?.send(subscribe(activeProduct));
 
     postMessage({ activeProductUpdated: activeProduct });
   }
@@ -94,10 +110,12 @@ function initWorker() {
     }
   }
 
+  // Socket handlers
   socket.addEventListener("open", handleSocketOpen);
   socket.addEventListener("close", handleSocketClose);
   socket.addEventListener("message", handleSocketMessage);
 
+  // Worker handlers
   onmessage = handleWorkerMessage;
 }
 
@@ -159,4 +177,4 @@ function updateDelta(delta: Order[], existing: OrderTotal[], sort: "asc" | "desc
   return getNewTotals(existing.slice(0, 100));
 }
 
-initWorker();
+initSocket();
