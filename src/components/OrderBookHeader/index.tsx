@@ -9,7 +9,7 @@ export default function OrderBookHeader(): React.ReactElement {
     <Container>
       <Title>Order Book</Title>
       <Spread>
-        Spread: {spreadNum} ({spreadPercent.toFixed(2)}%)
+        Spread: {spreadNum.toFixed(2)} ({spreadPercent.toFixed(2)}%)
       </Spread>
     </Container>
   );

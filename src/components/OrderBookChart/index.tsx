@@ -61,9 +61,9 @@ export function drawChart(
         .attr("height", plotHeight)
     );
 
-  function update() {
+  function clearStaleData() {
     d3.select(`svg.chart-${type}`).selectAll("g").remove().transition().duration(1000);
   }
 
-  return update;
+  return clearStaleData;
 }

@@ -9,8 +9,11 @@ import {
   XBTUSDProductID,
   Bid,
   Ask,
+  NotificationHidden,
+  NotificationVisible,
 } from "./typings";
 
+// Prefix in case of possible future atom key collisions
 export const ATOM_PREFIX = "@orderFlow_";
 
 export const ATOM_KEY = {
@@ -20,6 +23,9 @@ export const ATOM_KEY = {
   ASK_FEED: `${ATOM_PREFIX}askFeed`,
   WORKER: `${ATOM_PREFIX}worker`,
   WORKER_MESSAGES: `${ATOM_PREFIX}messages`,
+  NOTIFICATION_STATUS: `${ATOM_PREFIX}notificationStatus`,
+  NOTIFICATION_UPTIME: `${ATOM_PREFIX}notificationUptime`,
+  NOTIFICATION_MESSAGE: `${ATOM_PREFIX}notificationMessage`,
 };
 
 export const PRODUCT_ID = {
@@ -42,4 +48,9 @@ export const WORKER_MESSAGE = {
 export const ORDER_TYPE = {
   BID: "bid" as Bid,
   ASK: "ask" as Ask,
+};
+
+export const NOTIFICATION_STATUS = {
+  HIDDEN: "hidden" as NotificationHidden,
+  VISIBLE: "visible" as NotificationVisible,
 };

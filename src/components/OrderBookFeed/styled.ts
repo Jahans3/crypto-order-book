@@ -8,8 +8,6 @@ export const Container = styled.div`
 `;
 
 export const Table = styled.table`
-  //width: 50%;
-  // background-color: ${(props) => props.theme.main};
   background: transparent;
 `;
 

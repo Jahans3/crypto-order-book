@@ -41,3 +41,6 @@ export interface WorkerMessageFunctions {
   wakeWorker: () => void;
   toggleProduct: () => void;
 }
+
+export type NotificationVisible = "visible";
+export type NotificationHidden = "hidden";

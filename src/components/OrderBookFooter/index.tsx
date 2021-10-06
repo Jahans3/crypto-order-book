@@ -1,10 +1,14 @@
 import React from "react";
-import { Container, ToggleButton } from "./styled";
+import { Container } from "./styled";
+import Button from "../Button";
+import { useRecoilValue } from "recoil";
+import { workerMessagesAtom } from "../../state/orderFlowAtoms";
 
 export default function OrderBookFooter(): React.ReactElement {
+  const { toggleProduct = () => null } = useRecoilValue(workerMessagesAtom) ?? {};
   return (
     <Container>
-      <ToggleButton>Toggle Feed</ToggleButton>
+      <Button onClick={toggleProduct}>Toggle Feed</Button>
     </Container>
   );
 }

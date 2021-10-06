@@ -54,6 +54,8 @@ function initWorker() {
     activeProduct = activeProduct === PRODUCT_ID.XBT_USD ? PRODUCT_ID.ETH_USD : PRODUCT_ID.XBT_USD;
 
     socket.send(subscribe(activeProduct));
+
+    postMessage({ activeProductUpdated: activeProduct });
   }
 
   function handleSocketMessage(event: MessageEvent) {

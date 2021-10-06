@@ -2,8 +2,9 @@ import Worker from "worker-loader!../workers/orderFlowWorker";
 import { useEffect, useMemo } from "react";
 import { useSetRecoilState } from "recoil";
 import { spreadAtom, bidFeedAtom, askFeedAtom, workerAtom, workerMessagesAtom } from "../state/orderFlowAtoms";
-import { WORKER_MESSAGE } from "../constants";
+import { NOTIFICATION_STATUS, WORKER_MESSAGE } from "../constants";
 import { OrderData, WorkerMessages } from "../typings";
+import { notificationMessageAtom, notificationStatusAtom } from "../state/notification";
 
 function initWorker() {
   const worker = new Worker();
@@ -34,12 +35,22 @@ export function useOrderFlow(): void {
   const setSpread = useSetRecoilState(spreadAtom);
   const setBidFeed = useSetRecoilState(bidFeedAtom);
   const setAskFeed = useSetRecoilState(askFeedAtom);
+  const setNotificationMessage = useSetRecoilState(notificationMessageAtom);
+  const setNotificationStatus = useSetRecoilState(notificationStatusAtom);
 
   useEffect(() => {
     setWorker(worker);
     setWorkerMessages({ sleepWorker, wakeWorker, toggleProduct });
 
     function handleMessage(event: MessageEvent) {
+      const { activeProductUpdated } = event.data;
+
+      if (activeProductUpdated) {
+        setNotificationMessage(`Feed updated: ${activeProductUpdated.replace("PI_", "")}`);
+        setNotificationStatus(NOTIFICATION_STATUS.VISIBLE);
+        return;
+      }
+
       const { spread, asks, bids } = event.data as OrderData;
 
       setSpread(spread);
