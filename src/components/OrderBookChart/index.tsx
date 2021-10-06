@@ -9,14 +9,15 @@ export function drawChart(
 ): undefined | (() => void) {
   if (!svgElement || !data.length) return;
 
+  const isBid = type === "bid";
   const margin = { top: 0, right: 0, bottom: 0, left: 0 };
   const svgDimensions = svgElement.getBoundingClientRect();
   const width = svgDimensions.width - margin.right - margin.left;
   const height = svgDimensions.height - margin.top - margin.bottom;
-  const chartFill = type === "bid" ? THEME.chart.bidGreen : THEME.chart.askRed;
+  const chartFill = isBid ? THEME.chart.bidGreen : THEME.chart.askRed;
 
-  const xRange = type === "bid" ? [width, 0] : [0, width];
-  const yRange = type === "bid" ? [0, height] : [height, 0];
+  const xRange = [width, 0];
+  const yRange = [0, height];
 
   // Set range
   const x = d3.scaleLinear().range(xRange);
@@ -31,21 +32,20 @@ export function drawChart(
   const minTotal = Math.min(...mapTotal);
   const maxTotal = Math.max(...mapTotal);
 
-  const xDomain = type === "bid" ? [minTotal, maxTotal] : [maxTotal, minTotal];
-  const yDomain = type === "bid" ? [maxPrice, minPrice] : [minPrice, maxPrice];
+  const xDomain = isBid ? [minTotal, maxTotal] : [maxTotal, minTotal];
+  const yDomain = isBid ? [maxPrice, minPrice] : [minPrice, maxPrice];
 
   // Scale ranges to our data
   x.domain(xDomain);
   y.domain(yDomain);
 
-  const svg = d3
-    .select(`svg.chart-${type}`)
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.right})`);
+  const svg = d3.select(`svg.chart-${type}`).append("g");
 
   // Get our plotting functions
-  const plotY = type === "bid" ? ([price]: OrderTotal) => y(price) : ([price]: OrderTotal) => y(price);
-  const plotX = type === "bid" ? ([, , total]: OrderTotal) => x(total) : ([, , total]: OrderTotal) => x(total);
+  const plotY = ([price]: OrderTotal) => y(price);
+  const plotHeight = ([price]: OrderTotal) => height - y(price);
+  const plotX = isBid ? ([, , total]: OrderTotal) => x(total) : ([, , total]: OrderTotal) => width - x(total);
+  const plotWidth = isBid ? ([, , total]: OrderTotal) => width - x(total) : ([, , total]: OrderTotal) => x(total);
 
   svg
     .selectAll(".bar")
@@ -57,8 +57,8 @@ export function drawChart(
         .attr("class", "bar")
         .attr("x", plotX)
         .attr("y", plotY)
-        .attr("width", ([, , total]) => width - x(total))
-        .attr("height", ([price]) => height - y(price))
+        .attr("width", plotWidth)
+        .attr("height", plotHeight)
     );
 
   function update() {

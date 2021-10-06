@@ -95,12 +95,7 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
 
   return (
     <Container>
-      <svg
-        ref={svgRef}
-        className={`chart-${type}`}
-        style={{ position: "absolute", height: "calc(100% - 27px)", width: "100%", bottom: 0 }}
-      />
-      <Table ref={tableRef} style={{ position: "absolute", height: "100%", width: "100%" }}>
+      <Table ref={tableRef} style={{ position: "absolute", height: "100%", width: "100%", zIndex: 2 }}>
         <thead>
           <tr>
             <Headers type={type} />
@@ -112,6 +107,13 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
           ))}
         </tbody>
       </Table>
+      <div style={type === "ask" ? { transform: "scaleX(-1) translateX(0px)", height: "100%" } : {}}>
+        <svg
+          ref={svgRef}
+          className={`chart-${type}`}
+          style={{ position: "absolute", height: "calc(100% - 27px)", width: "100%", bottom: 0 }}
+        />
+      </div>
     </Container>
   );
 }
