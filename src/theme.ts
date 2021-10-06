@@ -1,3 +1,5 @@
+import { MOBILE_BREAKPOINT } from "./constants";
+
 export const THEME = {
   main: "#121724",
   secondary: "#212b39",
@@ -14,4 +16,5 @@ export const THEME = {
     red: "#f50000",
   },
   font: "verdana, sans-serif",
+  mobileBreakpoint: `(max-width: ${MOBILE_BREAKPOINT}px)`,
 };

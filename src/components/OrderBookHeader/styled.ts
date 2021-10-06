@@ -16,8 +16,3 @@ export const Title = styled.span`
   margin: 12px 18px;
   width: 35%;
 `;
-
-export const Spread = styled.span`
-  color: ${(props) => props.theme.text.dark};
-  font-family: ${(props) => props.theme.font};
-`;

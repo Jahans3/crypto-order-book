@@ -55,3 +55,5 @@ export const NOTIFICATION_STATUS = {
   HIDDEN: "hidden" as NotificationHidden,
   VISIBLE: "visible" as NotificationVisible,
 };
+
+export const MOBILE_BREAKPOINT = 768;

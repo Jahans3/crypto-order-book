@@ -6,6 +6,12 @@ export const Container = styled.div`
   position: relative;
   width: 50%;
   background-color: ${(props) => props.theme.main};
+  overflow: hidden;
+
+  @media only screen and ${(props) => props.theme.mobileBreakpoint} {
+    width: 100%;
+    height: 50%;
+  }
 `;
 
 export const Table = styled.table`

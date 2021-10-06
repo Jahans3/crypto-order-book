@@ -7,4 +7,8 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   background-color: ${(props) => props.theme.main};
+
+  @media only screen and ${(props) => props.theme.mobileBreakpoint} {
+    flex-direction: column-reverse;
+  }
 `;
