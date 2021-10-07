@@ -6,7 +6,7 @@ import Row from "./Row";
 import { askFeedAtom, bidFeedAtom } from "../../state/orderFlowAtoms";
 import { OrderType } from "../../typings";
 import { ORDER_TYPE } from "../../constants";
-import { Table, Container, Tr } from "./styled";
+import { Table, Container, Tr, Th } from "./styled";
 import OrderBookSpread from "../OrderBookSpread";
 import { useIsMobile } from "../../utils";
 
@@ -31,7 +31,8 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
 
       if (bounds) {
         const { height } = bounds;
-        const itemsToRender = Math.floor(height / 20); // Row height = 20px
+        const minusHeaders = height - 27;
+        const itemsToRender = Math.floor(minusHeaders / 22); // Row height = 22px
 
         setNumRows(itemsToRender);
       }
@@ -52,9 +53,9 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
         <thead>
           <Tr>
             {type === ORDER_TYPE.BID && isMobile ? (
-              <th colSpan={3}>
+              <Th colSpan={3}>
                 <OrderBookSpread />
-              </th>
+              </Th>
             ) : (
               <Headers type={type} />
             )}

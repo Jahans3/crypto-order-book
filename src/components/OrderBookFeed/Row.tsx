@@ -23,7 +23,7 @@ export default function Row({ type, total, size, price }: RowProps): React.React
   const isMobile = useIsMobile();
   return type === ORDER_TYPE.BID && !isMobile ? (
     <tr>
-      <Td end="left">{formattedTotal}</Td>
+      <Td>{formattedTotal}</Td>
       <Td>{formattedSize}</Td>
       <Td type={type} data-testid={testIds.price}>
         {formattedPrice}
@@ -35,7 +35,7 @@ export default function Row({ type, total, size, price }: RowProps): React.React
         {formattedPrice}
       </Td>
       <Td>{formattedSize}</Td>
-      <Td end="right">{formattedTotal}</Td>
+      <Td>{formattedTotal}</Td>
     </tr>
   );
 }

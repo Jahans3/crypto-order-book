@@ -36,13 +36,8 @@ export const THead = styled.th<{ end?: "left" | "right" }>`
   font-family: ${(props) => props.theme.font};
   font-size: 12px;
   font-weight: 400;
-  ${(props) => {
-    const { end } = props;
-
-    if (!end) return;
-
-    return end === "left" ? "padding-left: 10%;" : "padding-right: 10%;";
-  }}
+  padding-left: 5%;
+  padding-right: 5%;
 `;
 
 export const Td = styled.td<{ type?: OrderType; end?: "left" | "right" }>`
@@ -59,11 +54,11 @@ export const Td = styled.td<{ type?: OrderType; end?: "left" | "right" }>`
 
     return type === ORDER_TYPE.BID ? text.green : text.red;
   }};
-  ${(props) => {
-    const { end } = props;
+  padding-left: 5%;
+  padding-right: 5%;
+`;
 
-    if (!end) return;
-
-    return end === "left" ? "padding-left: 10%;" : "padding-right: 10%;";
-  }}
+export const Th = styled.th`
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;

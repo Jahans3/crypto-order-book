@@ -11,7 +11,7 @@ interface Props {
 export default function Headers({ type }: Props): React.ReactElement {
   return type === ORDER_TYPE.BID ? (
     <>
-      <THead colSpan={1} end="left" data-testid={testIds.headerTotal}>
+      <THead colSpan={1} data-testid={testIds.headerTotal}>
         TOTAL
       </THead>
       <THead colSpan={1}>SIZE</THead>
@@ -21,7 +21,7 @@ export default function Headers({ type }: Props): React.ReactElement {
     <>
       <THead colSpan={1}>PRICE</THead>
       <THead colSpan={1}>SIZE</THead>
-      <THead colSpan={1} end="right" data-testid={testIds.headerTotal}>
+      <THead colSpan={1} data-testid={testIds.headerTotal}>
         TOTAL
       </THead>
     </>
