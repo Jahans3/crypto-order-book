@@ -13,6 +13,7 @@ export const Container = styled.div`
 
 export const Title = styled.span`
   position: absolute;
+  top: 0;
   left: 0;
   color: ${(props) => props.theme.text.light};
   font-family: ${(props) => props.theme.font};
