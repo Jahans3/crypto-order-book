@@ -16,6 +16,8 @@ This project visualises order flow of XBT/USD and ETH/USD in real time.
 * [D3](https://d3js.org/)
 * [Styled Components](https://styled-components.com/)
 * [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker)
+* [Jest](https://jestjs.io/)
+* [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 
 ### App Overview
 
@@ -27,6 +29,12 @@ This is done to offload some heavy array processing and fast incoming websocket 
 ### Contributing
 
 Before contributing please ensure you have ESLint and Prettier set up and pointing to the configs in the root of this project.
+
+#### Unit Tests
+
+Unit tests are run with Jest and React Testing Library.
+
+To run tests: `$ yarn test`
 
 #### Git
 

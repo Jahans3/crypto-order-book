@@ -1,11 +1,6 @@
 import { atom } from "recoil";
-import { ATOM_KEY, PRODUCT_ID } from "../constants";
-import { OrderTotal, ProductIds, Spread, WorkerMessageFunctions } from "../typings";
-
-export const activeProductAtom = atom<ProductIds>({
-  key: ATOM_KEY.ACTIVE_PRODUCT,
-  default: PRODUCT_ID.XBT_USD,
-});
+import { ATOM_KEY } from "../constants";
+import { OrderTotal, Spread, WorkerMessageFunctions } from "../typings";
 
 export const spreadAtom = atom<Spread>({
   key: ATOM_KEY.SPREAD,
