@@ -1,4 +1,4 @@
-# OrderBook Web Index
+# OrderBook
 
 This project visualises order flow of XBT/USD and ETH/USD in real time.
 
