@@ -20,14 +20,14 @@ interface Props {
 }
 
 export default function OrderBookFeed({ type }: Props): React.ReactElement | null {
-  const tableRef = useRef<HTMLTableElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const feed = useRecoilValue(orderTypeStateMap[type]);
   const [numRows, setNumRows] = useState<number>(50);
   const isMobile = useIsMobile();
 
   useEffect(() => {
     function handleResize() {
-      const bounds = tableRef.current?.getBoundingClientRect();
+      const bounds = containerRef.current?.getBoundingClientRect();
 
       if (bounds) {
         const { height } = bounds;
@@ -44,11 +44,11 @@ export default function OrderBookFeed({ type }: Props): React.ReactElement | nul
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [tableRef]);
+  }, [containerRef]);
 
   return (
-    <Container>
-      <Table ref={tableRef}>
+    <Container ref={containerRef}>
+      <Table>
         <thead>
           <Tr>
             {type === ORDER_TYPE.BID && isMobile ? (
