@@ -9,13 +9,20 @@ This project visualises order flow of XBT/USD and ETH/USD in real time.
 3. Install prettier and use the local config: `.prettierrc.json`
 4. Run the project locally: `$ yarn start`
 
+### Core Tools
+
+* [React](https://reactjs.org/)
+* [Recoil](https://recoiljs.org/)
+* [D3](https://d3js.org/)
+* [Styled Components](https://styled-components.com/)
+* [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker)
+
 ### App Overview
 
 `order flow socket` `---->` [`order flow worker`](src/workers/orderFlowWorker/index.ts) `---->` [`order flow service`](src/services/orderFlowService/index.ts)
 
 This app uses a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) as a proxy to connect to the websocket API. 
-This is done to offload some heavy array processing and fast incoming websocket messages away from the UI thread, the worker 
-also contains the throttling logic allowing the UI update logic to be as simple as possible.
+This is done to offload some heavy array processing and fast incoming websocket messages away from the UI thread.
 
 ### Contributing
 
